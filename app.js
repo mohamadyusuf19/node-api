@@ -7,7 +7,7 @@ const config = require('./db');
 //menerima routes dari api/routes/products
 const productRoutes = require('./api/routes/products')
 const orderRoutes = require('./api/routes/order')
-
+const userRoutes = require('./api/routes/user')
 
 mongoose.connect(config.DB, {
     useNewUrlParser: true
@@ -15,11 +15,12 @@ mongoose.connect(config.DB, {
     .then(
         () => {console.log('Database is connected')},
         err => {console.log('Can not connect to the database' + err)}
-    )
+    );
+mongoose.Promise = global.Promise;
 //function middleware: yang digunakan 
 //untuk mengetahui status http verbs pada terminal(apabila menggunakan dev)
 app.use(morgan('dev'));
-
+app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 
@@ -38,7 +39,8 @@ app.use((req, res, next) => {
 });
 //dari folder routes ditambah / + routes yang akan di fetch e.g: /products
 app.use('/products', productRoutes);
-app.use('/order', orderRoutes);
+app.use('/orders', orderRoutes);
+app.use('/user', userRoutes);
 
 //jika routes tidak ada maka akan dialihkan ke sini
 app.use((req, res, next) => {
